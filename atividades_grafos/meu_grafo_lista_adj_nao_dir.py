@@ -18,6 +18,12 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
         Verifica se existe algum laço no grafo.
         :return: Um valor booleano que indica se existe algum laço.
         '''
+
+        for a in self.arestas.values():
+            if a.v1 == a.v2:
+                return True
+        return False
+    
         pass
 
     def grau(self, V=''):
@@ -27,6 +33,19 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
         :return: Um valor inteiro que indica o grau do vértice
         :raises: VerticeInvalidoError se o vértice não existe no grafo
         '''
+
+        if not self.existe_rotulo_vertice(V):
+            raise VerticeInvalidoError()
+
+        grau = 0
+
+        for a in self.arestas:
+            if self.arestas[a].v1.rotulo == V:
+                grau += 1
+            if self.arestas[a].v2.rotulo == V:
+                grau += 1
+        return grau
+    
         pass
 
     def ha_paralelas(self):
