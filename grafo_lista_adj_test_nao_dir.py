@@ -76,21 +76,65 @@ class TestGrafo(unittest.TestCase):
         self.g_r = GrafoBuilder().tipo(MeuGrafo()).vertices(2).arestas(1).build()
 
 
-        #dfs do grafo da paraíba 
-        self.g_p_dfs = MeuGrafo()
-        self.g_p_dfs.adiciona_vertice("J")
-        self.g_p_dfs.adiciona_vertice("C")
-        self.g_p_dfs.adiciona_vertice("E")
-        self.g_p_dfs.adiciona_vertice("P")
-        self.g_p_dfs.adiciona_vertice("T")
-        self.g_p_dfs.adiciona_vertice("M")
-        self.g_p_dfs.adiciona_vertice("Z")
-        self.g_p_dfs.adiciona_aresta('a1', 'J', 'C')
-        self.g_p_dfs.adiciona_aresta('a2', 'C', 'E')
-        self.g_p_dfs.adiciona_aresta('a4', 'C', 'P')
-        self.g_p_dfs.adiciona_aresta('a6', 'C', 'T')
-        self.g_p_dfs.adiciona_aresta('a8', 'T', 'M')
-        self.g_p_dfs.adiciona_aresta('a9', 'T', 'Z')
+        def cria_grafo_dfs(origem):
+            grafo = MeuGrafo()
+            for v in ["J", "C", "E", "P", "T", "M", "Z"]:
+                grafo.adiciona_vertice(v)
+
+            arestas_por_origem = {
+                "J": [("a1", "J", "C"), ("a2", "C", "E"), ("a4", "C", "P"), ("a6", "C", "T"), ("a8", "T", "M"), ("a9", "T", "Z")],
+                "C": [("a1", "C", "J"), ("a2", "C", "E"), ("a4", "C", "P"), ("a6", "C", "T"), ("a8", "T", "M"), ("a9", "T", "Z")],
+                "E": [("a2", "E", "C"), ("a1", "C", "J"), ("a4", "C", "P"), ("a6", "C", "T"), ("a8", "T", "M"), ("a9", "T", "Z")],
+                "P": [("a4", "P", "C"), ("a1", "C", "J"), ("a2", "C", "E"), ("a6", "C", "T"), ("a8", "T", "M"), ("a9", "T", "Z")],
+                "T": [("a6", "T", "C"), ("a1", "C", "J"), ("a2", "C", "E"), ("a4", "C", "P"), ("a7", "C", "M"), ("a9", "T", "Z")],
+                "M": [("a7", "M", "C"), ("a1", "C", "J"), ("a2", "C", "E"), ("a4", "C", "P"), ("a6", "C", "T"), ("a9", "T", "Z")],
+                "Z": [("a9", "Z", "T"), ("a6", "T", "C"), ("a1", "C", "J"), ("a2", "C", "E"), ("a4", "C", "P"), ("a7", "C", "M")],
+            }
+
+            for rotulo, v1, v2 in arestas_por_origem[origem]:
+                grafo.adiciona_aresta(rotulo, v1, v2)
+
+            return grafo
+      
+        #grafos dfs para usar no  def test_g_p_dfs(self):
+        self.g_p_J_dfs = cria_grafo_dfs("J")
+        self.g_p_C_dfs = cria_grafo_dfs("C")
+        self.g_p_E_dfs = cria_grafo_dfs("E")
+        self.g_p_P_dfs = cria_grafo_dfs("P")
+        self.g_p_T_dfs = cria_grafo_dfs("T")
+        self.g_p_M_dfs = cria_grafo_dfs("M")
+        self.g_p_Z_dfs = cria_grafo_dfs("Z")
+
+        def cria_grafo_bfs(origem):
+            grafo = MeuGrafo()
+            for v in ["J", "C", "E", "P", "T", "M", "Z"]:
+                grafo.adiciona_vertice(v)
+
+                arestas_por_origem = {
+        "J": [("a1", "J", "C"), ("a2", "C", "E"), ("a4", "C", "P"), ("a6", "C", "T"), ("a7", "C", "M"), ("a9", "T", "Z")],
+        "C": [("a1", "C", "J"), ("a2", "C", "E"), ("a4", "C", "P"), ("a6", "C", "T"), ("a7", "C", "M"), ("a9", "T", "Z")],
+        "E": [("a2", "E", "C"), ("a1", "C", "J"), ("a4", "C", "P"), ("a6", "C", "T"), ("a7", "C", "M"), ("a9", "T", "Z")],
+        "P": [("a4", "P", "C"), ("a1", "C", "J"), ("a2", "C", "E"), ("a6", "C", "T"), ("a7", "C", "M"), ("a9", "T", "Z")],
+        "T": [("a6", "T", "C"), ("a8", "T", "M"), ("a9", "T", "Z"), ("a1", "C", "J"), ("a2", "C", "E"), ("a4", "C", "P")],
+        "M": [("a7", "M", "C"), ("a8", "M", "T"), ("a1", "C", "J"), ("a2", "C", "E"), ("a4", "C", "P"), ("a9", "T", "Z")],
+        "Z": [("a9", "Z", "T"), ("a6", "T", "C"), ("a8", "T", "M"), ("a1", "C", "J"), ("a2", "C", "E"), ("a4", "C", "P")],
+
+    }
+
+            for rotulo, v1, v2 in arestas_por_origem[origem]:
+                grafo.adiciona_aresta(rotulo, v1, v2)
+
+            return grafo
+      
+        #grafos bfs para usar no  def test_g_p_bfs(self):
+        self.g_p_J_bfs = cria_grafo_bfs("J")
+        self.g_p_C_bfs = cria_grafo_bfs("C")
+        self.g_p_E_bfs = cria_grafo_bfs("E")
+        self.g_p_P_bfs = cria_grafo_bfs("P")
+        self.g_p_T_bfs = cria_grafo_bfs("T")
+        self.g_p_M_bfs = cria_grafo_bfs("M")
+        self.g_p_Z_bfs = cria_grafo_bfs("Z")
+        
 
     def test_adiciona_aresta(self):
         self.assertTrue(self.g_p.adiciona_aresta('a10', 'J', 'C'))
@@ -212,9 +256,19 @@ class TestGrafo(unittest.TestCase):
         self.assertFalse((self.g_d2.eh_completo()))
 
     def test_g_p_dfs(self):
-        self.assertEqual(self.g_p.dfs("J"), self.g_p_dfs)
-        print(self.g_p) 
-        print(self.g_p_dfs)
+        self.assertEqual(self.g_p.dfs("J"), self.g_p_J_dfs)
+        self.assertEqual(self.g_p.dfs("C"), self.g_p_C_dfs)
+        self.assertEqual(self.g_p.dfs("E"), self.g_p_E_dfs)
+        self.assertEqual(self.g_p.dfs("P"), self.g_p_P_dfs)
+        self.assertEqual(self.g_p.dfs("T"), self.g_p_T_dfs)
+        self.assertEqual(self.g_p.dfs("M"), self.g_p_M_dfs)
+        self.assertEqual(self.g_p.dfs("Z"), self.g_p_Z_dfs)
 
-
-
+    def test_g_p_bfs(self):
+        self.assertEqual(self.g_p.bfs("J"), self.g_p_J_bfs)
+        self.assertEqual(self.g_p.bfs("C"), self.g_p_C_bfs)
+        self.assertEqual(self.g_p.bfs("E"), self.g_p_E_bfs)
+        self.assertEqual(self.g_p.bfs("P"), self.g_p_P_bfs)
+        self.assertEqual(self.g_p.bfs("T"), self.g_p_T_bfs)
+        self.assertEqual(self.g_p.bfs("M"), self.g_p_M_bfs)
+        self.assertEqual(self.g_p.bfs("Z"), self.g_p_Z_bfs)
