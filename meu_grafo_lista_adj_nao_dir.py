@@ -128,6 +128,3 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
                     fila.put(v1)
 
         return grafo_bfs
-
-            
-        dfs_recursiva(V)
