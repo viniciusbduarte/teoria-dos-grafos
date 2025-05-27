@@ -14,4 +14,4 @@ g.adiciona_aresta('a3', '1', '5')
 g.adiciona_aresta('a4', '5', '2')
 
 
-print(g.eh_arvore())
+print(g.dfs("1"))
