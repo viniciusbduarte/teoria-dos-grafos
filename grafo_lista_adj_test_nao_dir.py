@@ -76,6 +76,7 @@ class TestGrafo(unittest.TestCase):
         self.g_r = GrafoBuilder().tipo(MeuGrafo()).vertices(2).arestas(1).build()
 
 
+        
         def cria_grafo_dfs(origem):
             grafo = MeuGrafo()
             for v in ["J", "C", "E", "P", "T", "M", "Z"]:
@@ -134,7 +135,67 @@ class TestGrafo(unittest.TestCase):
         self.g_p_T_bfs = cria_grafo_bfs("T")
         self.g_p_M_bfs = cria_grafo_bfs("M")
         self.g_p_Z_bfs = cria_grafo_bfs("Z")
-        
+
+        #grafo_arvore para teste
+        self.grafo_arvore = MeuGrafo()
+        for i in range(1, 11):
+            self.grafo_arvore.adiciona_vertice(str(i))
+        self.grafo_arvore.adiciona_aresta('a1', '1', '2')
+        self.grafo_arvore.adiciona_aresta('a2', '1', '3')
+        self.grafo_arvore.adiciona_aresta('a3', '2', '4')
+        self.grafo_arvore.adiciona_aresta('a4', '2', '5')
+        self.grafo_arvore.adiciona_aresta('a5', '3', '6')
+        self.grafo_arvore.adiciona_aresta('a6', '3', '7')
+        self.grafo_arvore.adiciona_aresta('a7', '4', '8')
+        self.grafo_arvore.adiciona_aresta('a8', '5', '9')
+        self.grafo_arvore.adiciona_aresta('a9', '7', '10')
+
+        #grafo nao bi partido
+        self.g_bipartido_1 = MeuGrafo()
+        self.g_bipartido_1.adiciona_vertice("A")
+        self.g_bipartido_1.adiciona_vertice("B")
+        self.g_bipartido_1.adiciona_vertice("C")
+        self.g_bipartido_1.adiciona_aresta("a1", "A", "B")
+        self.g_bipartido_1.adiciona_aresta("a2", "B", "C")
+        self.g_bipartido_1.adiciona_aresta("a3", "C", "A")
+
+        #grafo bi partido 
+        self.g_bipartido_2 = MeuGrafo()
+        self.g_bipartido_2.adiciona_vertice("A")
+        self.g_bipartido_2.adiciona_vertice("B")
+        self.g_bipartido_2.adiciona_vertice("C")
+        self.g_bipartido_2.adiciona_vertice("D")
+        self.g_bipartido_2.adiciona_aresta("a1", "A", "B")
+        self.g_bipartido_2.adiciona_aresta("a2", "B", "C")
+        self.g_bipartido_2.adiciona_aresta("a3", "C", "D")
+        self.g_bipartido_2.adiciona_aresta("a4", "D", "A")
+
+
+        #grafos ciclo 
+        self.g_ciclo = MeuGrafo()
+        self.g_ciclo.adiciona_vertice("A")
+        self.g_ciclo.adiciona_vertice("B")
+        self.g_ciclo.adiciona_vertice("C")
+        self.g_ciclo.adiciona_aresta("a1", "A", "B")
+        self.g_ciclo.adiciona_aresta("a2", "B", "C")
+        self.g_ciclo.adiciona_aresta("a3", "C", "A")
+
+        self.g_ciclo4 = MeuGrafo()
+        self.g_ciclo4.adiciona_vertice("A")
+        self.g_ciclo4.adiciona_vertice("B")
+        self.g_ciclo4.adiciona_vertice("C")
+        self.g_ciclo4.adiciona_vertice("D")
+        self.g_ciclo4.adiciona_aresta("a1", "A", "B")
+        self.g_ciclo4.adiciona_aresta("a2", "B", "C")
+        self.g_ciclo4.adiciona_aresta("a3", "C", "D")
+        self.g_ciclo4.adiciona_aresta("a4", "D", "A")
+
+        #laço
+        self.g_laco = MeuGrafo()
+        self.g_laco.adiciona_vertice("A")
+        self.g_laco.adiciona_aresta("a1", "A", "A")
+
+
 
     def test_adiciona_aresta(self):
         self.assertTrue(self.g_p.adiciona_aresta('a10', 'J', 'C'))
@@ -272,3 +333,20 @@ class TestGrafo(unittest.TestCase):
         self.assertEqual(self.g_p.bfs("T"), self.g_p_T_bfs)
         self.assertEqual(self.g_p.bfs("M"), self.g_p_M_bfs)
         self.assertEqual(self.g_p.bfs("Z"), self.g_p_Z_bfs)
+
+
+    def test_ha_ciclo(self):
+        self.assertTrue(self.g_ciclo.ha_ciclo())
+        self.assertTrue(self.g_p_sem_paralelas.ha_ciclo())
+        self.assertFalse(self.grafo_arvore.ha_ciclo())
+        self.assertTrue(self.g_laco.ha_ciclo())
+        self.assertTrue(self.g_ciclo4.ha_ciclo())
+
+    def test_eh_bipartido(self):
+        self.assertFalse(self.g_bipartido_1.eh_bipartido())
+        self.assertTrue(self.g_bipartido_2.eh_bipartido())
+
+    def test_eh_arvore(self):
+        self.assertFalse(self.g_p.eh_arvore())
+        self.assertEqual(self.grafo_arvore.eh_arvore(), ['6', '8', '9', '10'])
+        

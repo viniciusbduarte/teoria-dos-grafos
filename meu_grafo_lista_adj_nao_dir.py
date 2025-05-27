@@ -128,3 +128,73 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
                     fila.put(v1)
 
         return grafo_bfs
+            
+    def ha_ciclo(self):
+            visitados = set()
+
+            def dfs_ciclo(u, pai):
+                visitados.add(u)
+                for aresta in self.arestas.values():
+                    v1 = aresta.v1.rotulo
+                    v2 = aresta.v2.rotulo
+                    vizinho = None
+                    if v1 == u:
+                        vizinho = v2
+                    elif v2 == u:
+                        vizinho = v1
+
+                    if vizinho is not None:
+                        if vizinho not in visitados:
+                            if dfs_ciclo(vizinho, u):
+                                return True
+                        elif vizinho != pai:
+                            return True
+                return False
+
+            for vertice in self.vertices:
+                if vertice.rotulo not in visitados:
+                    if dfs_ciclo(vertice.rotulo, None):
+                        return True
+            return False
+
+    def eh_bipartido(self):
+            cores = {}
+            for vertice in self.vertices:
+                if vertice.rotulo not in cores:
+                    fila = Queue()
+                    fila.put(vertice.rotulo)
+                    cores[vertice.rotulo] = '0'
+
+                    while not fila.empty():
+                        u = fila.get()
+                        for aresta in self.arestas.values():
+                            v1 = aresta.v1.rotulo
+                            v2 = aresta.v2.rotulo
+                            vizinho = None
+                            if v1 == u:
+                                vizinho = v2
+                            elif v2 == u:
+                                vizinho = v1
+
+                            if vizinho is not None:
+                                if vizinho not in cores:
+                                    cores[vizinho] = '1' if cores[u] == '0' else '0'
+                                    fila.put(vizinho)
+                                elif cores[vizinho] == cores[u]:
+                                    return False
+            return True
+
+    def eh_arvore(self):
+        if self.ha_laco() or self.ha_paralelas():
+            return False
+
+        grafo_dfs = self.dfs(self.vertices[0].rotulo)
+        if len(grafo_dfs.vertices) != len(self.vertices):
+            return False
+
+        if len(self.arestas) != len(self.vertices) - 1:
+            return False
+
+        folhas = [v.rotulo for v in self.vertices if self.grau(v.rotulo) == 1]
+
+        return folhas
