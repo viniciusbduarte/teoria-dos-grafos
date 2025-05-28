@@ -195,6 +195,49 @@ class TestGrafo(unittest.TestCase):
         self.g_laco.adiciona_vertice("A")
         self.g_laco.adiciona_aresta("a1", "A", "A")
 
+        
+        # 1. Grafo Bipartido (conexo)
+        self.g_bipartido = MeuGrafo()
+        self.g_bipartido.adiciona_vertice("1")
+        self.g_bipartido.adiciona_vertice("2")
+        self.g_bipartido.adiciona_vertice("3")
+        self.g_bipartido.adiciona_vertice("4")
+        self.g_bipartido.adiciona_aresta("a1", "1", "2")
+        self.g_bipartido.adiciona_aresta("a2", "1", "4")
+        self.g_bipartido.adiciona_aresta("a3", "3", "2")
+        self.g_bipartido.adiciona_aresta("a4", "3", "4")
+
+        # 2. Grafo Não Bipartido (conexo)
+        self.g_nao_bipartido = MeuGrafo()
+        self.g_nao_bipartido.adiciona_vertice("1")
+        self.g_nao_bipartido.adiciona_vertice("2")
+        self.g_nao_bipartido.adiciona_vertice("3")
+        self.g_nao_bipartido.adiciona_aresta("a1", "1", "2")
+        self.g_nao_bipartido.adiciona_aresta("a2", "2", "3")
+        self.g_nao_bipartido.adiciona_aresta("a3", "3", "1")
+
+        # 3. Grafo Bipartido (desconexo)
+        self.g_bipartido_desconexo = MeuGrafo()
+        self.g_bipartido_desconexo.adiciona_vertice("1")
+        self.g_bipartido_desconexo.adiciona_vertice("2")
+        self.g_bipartido_desconexo.adiciona_vertice("3")
+        self.g_bipartido_desconexo.adiciona_vertice("4")
+        self.g_bipartido_desconexo.adiciona_aresta("a1", "1", "2")  # componente 1
+        self.g_bipartido_desconexo.adiciona_aresta("a2", "3", "4")  # componente 2
+
+        # 4. Grafo Não Bipartido (desconexo)
+        self.g_nao_bipartido_desconexo = MeuGrafo()
+        self.g_nao_bipartido_desconexo.adiciona_vertice("1")
+        self.g_nao_bipartido_desconexo.adiciona_vertice("2")
+        self.g_nao_bipartido_desconexo.adiciona_vertice("3")
+        self.g_nao_bipartido_desconexo.adiciona_vertice("4")
+        self.g_nao_bipartido_desconexo.adiciona_vertice("5")
+        self.g_nao_bipartido_desconexo.adiciona_aresta("a1", "1", "2")  # triângulo
+        self.g_nao_bipartido_desconexo.adiciona_aresta("a2", "2", "3")
+        self.g_nao_bipartido_desconexo.adiciona_aresta("a3", "3", "1")
+        self.g_nao_bipartido_desconexo.adiciona_aresta("a4", "4", "5")  # componente separado
+
+
 
 
     def test_adiciona_aresta(self):
@@ -334,7 +377,6 @@ class TestGrafo(unittest.TestCase):
         self.assertEqual(self.g_p.bfs("M"), self.g_p_M_bfs)
         self.assertEqual(self.g_p.bfs("Z"), self.g_p_Z_bfs)
 
-
     def test_ha_ciclo(self):
         self.assertTrue(self.g_ciclo.ha_ciclo())
         self.assertTrue(self.g_p_sem_paralelas.ha_ciclo())
@@ -342,11 +384,12 @@ class TestGrafo(unittest.TestCase):
         self.assertTrue(self.g_laco.ha_ciclo())
         self.assertTrue(self.g_ciclo4.ha_ciclo())
 
-    def test_eh_bipartido(self):
-        self.assertFalse(self.g_bipartido_1.eh_bipartido())
-        self.assertTrue(self.g_bipartido_2.eh_bipartido())
-
     def test_eh_arvore(self):
         self.assertFalse(self.g_p.eh_arvore())
         self.assertEqual(self.grafo_arvore.eh_arvore(), ['6', '8', '9', '10'])
         
+    def test_eh_bipartifo(self):
+        self.assertTrue(self.g_bipartido.eh_bipartido())            
+        self.assertFalse(self.g_nao_bipartido.eh_bipartido())       
+        self.assertTrue(self.g_bipartido_desconexo.eh_bipartido()) 
+        self.assertFalse(self.g_nao_bipartido_desconexo.eh_bipartido())  

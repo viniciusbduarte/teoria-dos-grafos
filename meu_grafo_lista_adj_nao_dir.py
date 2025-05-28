@@ -1,4 +1,5 @@
 from bibgrafo.grafo_lista_adj_nao_dir import GrafoListaAdjacenciaNaoDirecionado
+from itertools import combinations
 from collections import deque 
 from bibgrafo.grafo_errors import *
 from queue import Queue
@@ -9,15 +10,18 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
         nao_adjacentes = set()
         vertices = [v.rotulo for v in self.vertices]
         adjacentes = set()
+        
         for aresta in self.arestas.values():
             v1 = aresta.v1.rotulo
             v2 = aresta.v2.rotulo
             adjacentes.add(frozenset([v1, v2]))
+        
         for i in range(len(vertices)):
             for j in range(i + 1, len(vertices)):
                 par = frozenset([vertices[i], vertices[j]])
                 if par not in adjacentes:
                     nao_adjacentes.add(f"{vertices[i]}-{vertices[j]}")
+        
         return nao_adjacentes
 
     def ha_laco(self):
@@ -145,7 +149,7 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
         return len(self.arestas) > len(grafo_dfs.arestas)
     
     def eh_arvore(self): 
-        if self.ha_laco() or self.ha_paralelas() or self.ha_ciclo():
+        if self.ha_laco() or self.ha_ciclo():
             return False 
         if len(self.arestas) != len(self.vertices) - 1:
             return False
@@ -153,30 +157,34 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
         folhas = [v.rotulo for v in self.vertices if self.grau(v.rotulo) == 1]
 
         return folhas
- 
+
+    def ha_adjacencia(self, V1 = "", V2 = ""):
+        for aresta in self.arestas.values():
+            v1 = aresta.v1.rotulo
+            v2 = aresta.v2.rotulo
+            if (V1 == v1 and V2 == v2) or (V1 == v2 and V2 == v1):
+                return True
+        return False
+    
     def eh_bipartido(self):
-            cores = {}
-            for vertice in self.vertices:
-                if vertice.rotulo not in cores:
-                    fila = Queue()
-                    fila.put(vertice.rotulo)
-                    cores[vertice.rotulo] = '0'
+        vertices = [v.rotulo for v in self.vertices]
+        n = len(vertices)
+        vertices_set = set(vertices)
 
-                    while not fila.empty():
-                        u = fila.get()
-                        for aresta in self.arestas.values():
-                            v1 = aresta.v1.rotulo
-                            v2 = aresta.v2.rotulo
-                            vizinho = None
-                            if v1 == u:
-                                vizinho = v2
-                            elif v2 == u:
-                                vizinho = v1
-
-                            if vizinho is not None:
-                                if vizinho not in cores:
-                                    cores[vizinho] = '1' if cores[u] == '0' else '0'
-                                    fila.put(vizinho)
-                                elif cores[vizinho] == cores[u]:
-                                    return False
+        def grupo_sem_adjacencia(grupo):
+            for i in range(len(grupo)):
+                for j in range(i + 1, len(grupo)):
+                    if self.ha_adjacencia(grupo[i], grupo[j]):
+                        return False
             return True
+
+        for i in range(1, n // 2 + 1):
+            for grupo_a in combinations(vertices, i):
+                grupo_b = list(vertices_set - set(grupo_a))
+                grupo_a = list(grupo_a)
+
+                if grupo_sem_adjacencia(grupo_a) and grupo_sem_adjacencia(grupo_b):
+                    return True
+
+        return False
+
