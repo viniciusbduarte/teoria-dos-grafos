@@ -136,10 +136,6 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
                     visitados.add(v1)
                     fila.put(v1)
 
-        for v in self.vertices:
-            if v.rotulo not in visitados:
-                self.bfs(v.rotulo)
-
         return grafo_bfs
             
     def ha_ciclo(self): 
