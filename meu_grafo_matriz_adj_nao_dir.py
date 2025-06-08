@@ -8,10 +8,20 @@ class MeuGrafo(GrafoMatrizAdjacenciaNaoDirecionado):
         '''
         Provê um conjunto (set) de vértices não adjacentes no grafo.
         O conjunto terá o seguinte formato: {X-Z, X-W, ...}
-        Onde X, Z e W são vértices no grafo que não tem uma aresta entre eles.
+        Onde X, Z e W são vértices no grafo que não têm uma aresta entre eles.
         :return: Um conjunto (set) com os pares de vértices não adjacentes
         '''
-        pass
+        vertices_nao_adjacentes = set()
+
+        for i in range(len(self.matriz)):
+            for j in range(i + 1, len(self.matriz)): 
+
+                if len(self.matriz[i][j]) == 0:
+                    rotulo_i = self.vertices[i].rotulo
+                    rotulo_j = self.vertices[j].rotulo
+                    vertices_nao_adjacentes.add(f"{rotulo_i}-{rotulo_j}")
+
+        return vertices_nao_adjacentes
 
     def ha_laco(self):
         '''
@@ -64,8 +74,22 @@ class MeuGrafo(GrafoMatrizAdjacenciaNaoDirecionado):
         :return: Um conjunto com os rótulos das arestas que incidem sobre o vértice
         :raises: VerticeInvalidoError se o vértice não existe no grafo
         '''
-        pass
 
+        if not self.existe_rotulo_vertice(V):
+            raise VerticeInvalidoError()
+        
+        arestas_sobre_vertice = set()
+
+        v_obj = self.get_vertice(V)
+        v_indice = self.indice_do_vertice(v_obj)
+
+        for j in range(len(self.matriz[v_indice])):
+            if (self.matriz[v_indice][j] is not None):
+                for aresta in self.matriz[v_indice][j]:
+                    arestas_sobre_vertice.add(aresta)
+
+        return arestas_sobre_vertice
+        
     def eh_completo(self):
         '''
         Verifica se o grafo é completo.

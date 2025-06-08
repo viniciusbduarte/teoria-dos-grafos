@@ -12,4 +12,4 @@ g.adiciona_aresta('a2', 'D', 'C')
 g.adiciona_aresta('a3', 'D', 'C')
 
 
-print(g.eh_completo())
+print(g.vertices_nao_adjacentes())
