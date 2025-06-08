@@ -18,8 +18,10 @@ class MeuGrafo(GrafoMatrizAdjacenciaNaoDirecionado):
         Verifica se existe algum laço no grafo.
         :return: Um valor booleano que indica se existe algum laço.
         '''
-        pass
-
+        for i in range(len(self.matriz)):
+            if len(self.matriz[i][i]) > 0:
+                return True
+        return False
 
     def grau(self, V=''):
         '''
@@ -28,14 +30,31 @@ class MeuGrafo(GrafoMatrizAdjacenciaNaoDirecionado):
         :return: Um valor inteiro que indica o grau do vértice
         :raises: VerticeInvalidoError se o vértice não existe no grafo
         '''
-        pass
+        if not self.existe_rotulo_vertice(V):
+            raise VerticeInvalidoError()
+        
+        v_obj = self.get_vertice(V)
+        v_indice = self.indice_do_vertice(v_obj)
+        grau = 0
+
+        for j in range(len(self.matriz[v_indice])):
+            if (self.matriz[v_indice][j] is not None) and v_indice == j:
+                grau += len(self.matriz[v_indice][j])*2
+            elif self.matriz[v_indice][j] is not None:
+                grau += len(self.matriz[v_indice][j])
+
+        return grau
 
     def ha_paralelas(self):
         '''
         Verifica se há arestas paralelas no grafo
         :return: Um valor booleano que indica se existem arestas paralelas no grafo.
         '''
-        pass
+        for linha in self.matriz:
+            for elemento in linha:
+                if len(elemento) > 1:
+                    return True
+        return False
 
     def arestas_sobre_vertice(self, V):
         '''
@@ -52,4 +71,18 @@ class MeuGrafo(GrafoMatrizAdjacenciaNaoDirecionado):
         Verifica se o grafo é completo.
         :return: Um valor booleano que indica se o grafo é completo
         '''
-        pass
+        if self.ha_laco():
+            return False
+
+        grau_ref = self.grau(self.vertices[0].rotulo)
+
+        for vertice in self.vertices:
+            if self.grau(vertice.rotulo) != grau_ref:
+                return False
+
+        if grau_ref != len(self.vertices) - 1:
+            return False
+
+        return True
+    
+
