@@ -62,7 +62,24 @@ class MeuGrafo(GrafoMatrizAdjacenciaDirecionado):
 
     def warshall(self):
         '''
-        Provê a matriz de alcançabilidade de Warshall do grafo
-        :return: Uma lista de listas que representa a matriz de alcançabilidade de Warshall associada ao grafo
+        Provê a matriz de alcançabilidade de Warshall do grafo direcionado.
+        :return: Uma lista de listas com 0s e 1s representando a matriz de alcançabilidade.
         '''
-        pass
+
+        n = len(self.vertices)
+        matrizwarshall = [[0 for c in range(n)] for c in range(n)]
+
+        for i in range(n):
+            for j in range(n):
+                if len(self.matriz[i][j]) > 0:
+                    matrizwarshall[i][j] = 1
+
+        #Warshall
+        for j in range(n):
+            for i in range(n):
+                if matrizwarshall[i][j] == 1:
+                    for k in range(n):
+                        matrizwarshall[i][k] = max(matrizwarshall[i][k],matrizwarshall[j][k])
+
+        return matrizwarshall
+                                               

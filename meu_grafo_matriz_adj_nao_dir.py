@@ -17,9 +17,7 @@ class MeuGrafo(GrafoMatrizAdjacenciaNaoDirecionado):
             for j in range(i + 1, len(self.matriz)): 
 
                 if len(self.matriz[i][j]) == 0:
-                    rotulo_i = self.vertices[i].rotulo
-                    rotulo_j = self.vertices[j].rotulo
-                    vertices_nao_adjacentes.add(f"{rotulo_i}-{rotulo_j}")
+                    vertices_nao_adjacentes.add(f"{self.vertices[i]}-{self.vertices[j]}")
 
         return vertices_nao_adjacentes
 
