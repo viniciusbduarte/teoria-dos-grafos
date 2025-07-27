@@ -75,6 +75,32 @@ class TestGrafo(unittest.TestCase):
         self.g_e.adiciona_aresta('9', 'E', 'A')
         self.g_e.adiciona_aresta('11', 'E', 'B')
 
+        self.grafo_simples = MeuGrafo()
+        self.grafo_simples.adiciona_vertice("A")
+        self.grafo_simples.adiciona_vertice("B")
+        self.grafo_simples.adiciona_vertice("C")
+        self.grafo_simples.adiciona_aresta("1", "A", "B")
+        self.grafo_simples.adiciona_aresta("2", "B", "C")
+
+        self.grafo_laco = MeuGrafo()
+        self.grafo_laco.adiciona_vertice("A")
+        self.grafo_laco.adiciona_vertice("B")
+        self.grafo_laco.adiciona_aresta("1", "A", "A")
+        self.grafo_laco.adiciona_aresta("2", "A", "B")
+
+        self.grafo_desconexo = MeuGrafo()
+        self.grafo_desconexo.adiciona_vertice("X")
+        self.grafo_desconexo.adiciona_vertice("Y")
+        self.grafo_desconexo.adiciona_vertice("Z")
+
+        self.grafo_ciclo = MeuGrafo()
+        self.grafo_ciclo.adiciona_vertice("1")
+        self.grafo_ciclo.adiciona_vertice("2")
+        self.grafo_ciclo.adiciona_vertice("3")
+        self.grafo_ciclo.adiciona_aresta("a", "1", "2")
+        self.grafo_ciclo.adiciona_aresta("b", "2", "3")
+        self.grafo_ciclo.adiciona_aresta("c", "3", "1")
+
     def test_adiciona_aresta(self):
         self.assertTrue(self.g_p.adiciona_aresta('a10', 'J', 'C'))
         a = ArestaDirecionada("zxc", self.g_p.get_vertice("C"), self.g_p.get_vertice("Z"))
@@ -210,3 +236,28 @@ class TestGrafo(unittest.TestCase):
         with self.assertRaises(VerticeInvalidoError):
             self.g_p.arestas_sobre_vertice('A')
         self.assertEqual(set(self.g_e.arestas_sobre_vertice('D')), {'5', '6', '7', '8'})
+
+    def test_warshal(self):
+        esperado_simples = [
+            [0, 1, 1],
+            [0, 0, 1],
+            [0, 0, 0]
+        ]
+        esperado_laco = [
+            [1, 1],
+            [0, 0]
+        ]
+        esperado_desconexo = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        esperado_ciclo = [
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1]
+        ]
+        self.assertEqual(self.grafo_simples.warshall(), esperado_simples)
+        self.assertEqual(self.grafo_laco.warshall(), esperado_laco)
+        self.assertEqual(self.grafo_desconexo.warshall(), esperado_desconexo)
+        self.assertEqual(self.grafo_ciclo.warshall(), esperado_ciclo)

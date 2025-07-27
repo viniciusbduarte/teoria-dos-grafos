@@ -1,5 +1,6 @@
 from bibgrafo.grafo_lista_adj_dir import GrafoListaAdjacenciaDirecionado
 from bibgrafo.grafo_errors import *
+import heapq
 
 
 class MeuGrafo(GrafoListaAdjacenciaDirecionado):
@@ -60,3 +61,84 @@ class MeuGrafo(GrafoListaAdjacenciaDirecionado):
         :return: Um valor booleano que indica se o grafo é completo
         '''
         pass
+
+    def dijkstra(self, vi, vf):
+        distancias = {v.rotulo: float('inf') for v in self.vertices}
+        distancias[vi] = 0
+
+        anterior = {v.rotulo: None for v in self.vertices}
+        visitados = set()
+
+        fila = [(0, vi)]  # (distância acumulada, vértice atual)
+
+        while fila:
+            distancia_atual, atual = heapq.heappop(fila)
+
+            if atual in visitados:
+                continue
+            visitados.add(atual)
+
+            for aresta in self.arestas.values():
+                # SOMENTE no sentido v1 → v2
+                if aresta.v1.rotulo == atual:
+                    vizinho = aresta.v2.rotulo
+                    peso = aresta.peso
+                    
+                    if peso < 0:
+                        raise Exception("Peso negativo detectado!")
+                    
+                    nova_distancia = distancia_atual + peso
+                    if nova_distancia < distancias[vizinho]:
+                        distancias[vizinho] = nova_distancia
+                        anterior[vizinho] = atual
+                        heapq.heappush(fila, (nova_distancia, vizinho))
+
+        # Reconstruir o caminho
+        caminho = []
+        atual = vf
+        while atual is not None:
+            caminho.insert(0, atual)
+            atual = anterior[atual]
+
+        if distancias[vf] == float('inf'):
+            return None, float('inf')  # Sem caminho possível
+
+        return caminho, distancias[vf]
+    
+
+
+
+    def bellman_ford(self, origem, destino):
+        distancias = {v.rotulo: float('inf') for v in self.vertices}
+        anterior = {v.rotulo: None for v in self.vertices}
+        distancias[origem] = 0
+
+        # Relaxa arestas V - 1 vezes
+        for _ in range(len(self.vertices) - 1):
+            for aresta in self.arestas.values():
+                u = aresta.v1.rotulo
+                v = aresta.v2.rotulo
+                peso = aresta.peso
+                if distancias[u] + peso < distancias[v]:
+                    distancias[v] = distancias[u] + peso
+                    anterior[v] = u
+
+        # Verifica ciclos negativos
+        for aresta in self.arestas.values():
+            u = aresta.v1.rotulo
+            v = aresta.v2.rotulo
+            peso = aresta.peso
+            if distancias[u] + peso < distancias[v]:
+                raise Exception("Ciclo negativo detectado!")
+
+        # Reconstrói o caminho de origem até destino
+        caminho = []
+        atual = destino
+        while atual is not None:
+            caminho.insert(0, atual)
+            atual = anterior[atual]
+
+        if caminho[0] != origem:
+            return None, float('inf')  # Sem caminho possível
+
+        return caminho, distancias[destino]
