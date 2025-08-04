@@ -15,6 +15,3 @@ g.adiciona_aresta('a4', 'D', 'D', -3)
 
 
 
-
-
-print(g.bellman_ford('B', 'D'))  # Saída: (None, inf) → pois D → A não existe

@@ -70,7 +70,7 @@ class MeuGrafo(GrafoListaAdjacenciaDirecionado):
         visitados = set()
 
         fila = [(0, vi)]  # (distância acumulada, vértice atual)
-
+        
         while fila:
             distancia_atual, atual = heapq.heappop(fila)
 
@@ -79,7 +79,7 @@ class MeuGrafo(GrafoListaAdjacenciaDirecionado):
             visitados.add(atual)
 
             for aresta in self.arestas.values():
-                # SOMENTE no sentido v1 → v2
+                # SOMENTE no sentido v1 -> v2
                 if aresta.v1.rotulo == atual:
                     vizinho = aresta.v2.rotulo
                     peso = aresta.peso
@@ -109,11 +109,11 @@ class MeuGrafo(GrafoListaAdjacenciaDirecionado):
 
 
     def bellman_ford(self, origem, destino):
-        distancias = {v.rotulo: float('inf') for v in self.vertices}
+        distancias = {v.
+                      rotulo: float('inf') for v in self.vertices}
         anterior = {v.rotulo: None for v in self.vertices}
         distancias[origem] = 0
 
-        # Relaxa arestas V - 1 vezes
         for _ in range(len(self.vertices) - 1):
             for aresta in self.arestas.values():
                 u = aresta.v1.rotulo
@@ -131,7 +131,6 @@ class MeuGrafo(GrafoListaAdjacenciaDirecionado):
             if distancias[u] + peso < distancias[v]:
                 raise Exception("Ciclo negativo detectado!")
 
-        # Reconstrói o caminho de origem até destino
         caminho = []
         atual = destino
         while atual is not None:

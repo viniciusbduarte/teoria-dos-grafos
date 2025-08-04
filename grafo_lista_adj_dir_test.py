@@ -200,3 +200,60 @@ class TestGrafo(unittest.TestCase):
         self.assertFalse((self.g_l5.eh_completo()))
         self.assertFalse((self.g_d.eh_completo()))
         self.assertFalse((self.g_d2.eh_completo()))
+
+    def test_dijkstra(self):
+        # Grafo simples sem pesos negativos
+        g = MeuGrafo()
+        for v in ["A", "B", "C", "D"]:
+            g.adiciona_vertice(v)
+        g.adiciona_aresta('a1', 'A', 'B', 1)
+        g.adiciona_aresta('a2', 'B', 'C', 2)
+        g.adiciona_aresta('a3', 'A', 'C', 4)
+        g.adiciona_aresta('a4', 'C', 'D', 1)
+
+        caminho, custo = g.dijkstra('A', 'D')
+        self.assertEqual(caminho, ['A', 'B', 'C', 'D'])
+        self.assertEqual(custo, 4)
+
+        caminho, custo = g.dijkstra('A', 'C')
+        self.assertEqual(caminho, ['A', 'B', 'C'])
+        self.assertEqual(custo, 3)
+
+        caminho, custo = g.dijkstra('D', 'A')
+        self.assertIsNone(caminho)
+        self.assertEqual(custo, float('inf'))
+
+        # Teste com peso negativo (deve lançar exceção)
+        g_neg = MeuGrafo()
+        g_neg.adiciona_vertice('X')
+        g_neg.adiciona_vertice('Y')
+        g_neg.adiciona_aresta('a1', 'X', 'Y', -1)
+        with self.assertRaises(Exception) as context:
+            g_neg.dijkstra('X', 'Y')
+        self.assertIn('Peso negativo detectado', str(context.exception))
+
+    def test_bellman_ford(self):
+        # Grafo simples com pesos negativos, mas sem ciclos negativos
+        g = MeuGrafo()
+        for v in ["A", "B", "C", "D"]:
+            g.adiciona_vertice(v)
+        g.adiciona_aresta('a1', 'A', 'B', 4)
+        g.adiciona_aresta('a2', 'A', 'C', 5)
+        g.adiciona_aresta('a3', 'B', 'C', -3)
+        g.adiciona_aresta('a4', 'C', 'D', 2)
+
+        caminho, custo = g.bellman_ford('A', 'D')
+        self.assertEqual(caminho, ['A', 'B', 'C', 'D'])
+        self.assertEqual(custo, 3)
+
+        # Teste com ciclo negativo (deve lançar exceção)
+        g_ciclo = MeuGrafo()
+        for v in ["A", "B", "C"]:
+            g_ciclo.adiciona_vertice(v)
+        g_ciclo.adiciona_aresta('a1', 'A', 'B', 1)
+        g_ciclo.adiciona_aresta('a2', 'B', 'C', -2)
+        g_ciclo.adiciona_aresta('a3', 'C', 'A', -2)
+
+        with self.assertRaises(Exception) as context:
+            g_ciclo.bellman_ford('A', 'C')
+        self.assertIn('Ciclo negativo detectado', str(context.exception))
